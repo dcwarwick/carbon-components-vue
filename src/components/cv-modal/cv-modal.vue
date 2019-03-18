@@ -16,7 +16,7 @@
         class="cv-modal__before-content"
         ref="beforeContent"
         tabindex="0"
-        style="position: absolute; height: 1px; width: 1px; left: -9999px"
+        style="position: absolute; height: 1px; width: 1px; left: -9999px;"
         @focus="focusBeforeContent"
       />
       <div class="bx--modal-header">
@@ -27,7 +27,9 @@
           <slot name="title">Modal Title</slot>
         </h2>
         <button class="bx--modal-close" type="button" @click="hide" ref="close">
+          <Close16 v-if="componentsX" class="bx--modal-close__icon" />
           <cv-icon
+            v-else
             class="bx--modal-close__icon"
             href="cv(icon--close)"
             height="10px"
@@ -36,7 +38,7 @@
         </button>
       </div>
 
-      <div class="bx--modal-content">
+      <div class="bx--modal-content" ref="content">
         <slot name="content">
           <p>
             Passive modal notifications should only appear if there is an action
@@ -70,7 +72,7 @@
         class="cv-modal__after-content"
         ref="afterContent"
         tabindex="0"
-        style="position: absolute; height: 1px; width: 1px; left: -9999px"
+        style="position: absolute; height: 1px; width: 1px; left: -9999px;"
         @focus="focusAfterContent"
       />
     </div>
@@ -81,6 +83,8 @@
 import CvButton from '../cv-button/cv-button';
 import CvIcon from '../cv-icon/_cv-icon';
 import uidMixin from '../../mixins/uid-mixin';
+import Close16 from '@carbon/icons-vue/lib/close//16';
+import { componentsX } from '../../_internal/_feature-flags';
 
 export default {
   name: 'CvModal',
@@ -88,6 +92,7 @@ export default {
   components: {
     CvButton,
     CvIcon,
+    Close16,
   },
   props: {
     kind: {
@@ -99,6 +104,7 @@ export default {
   },
   data() {
     return {
+      componentsX,
       dataVisible: false,
     };
   },
@@ -119,14 +125,14 @@ export default {
   computed: {
     primaryKind() {
       if (this.kind === 'danger') {
-        return 'danger--primary';
+        return componentsX ? 'danger' : 'danger--primary';
       } else {
         return 'primary';
       }
     },
     secondaryKind() {
       if (this.kind === 'danger') {
-        return 'tertiary';
+        return componentsX ? 'secondary' : 'tertiary';
       } else {
         return 'secondary';
       }
@@ -149,7 +155,12 @@ export default {
       this.$refs.close.focus();
     },
     onShown() {
-      if (this.$slots['primary-button']) {
+      const focusEl = this.$refs.content.querySelector(
+        '[data-modal-primary-focus]'
+      );
+      if (focusEl) {
+        focusEl.focus();
+      } else if (this.$slots['primary-button']) {
         this.$refs.primary.$el.focus();
       } else if (this.$slots['secondary-button']) {
         this.$refs.secondary.$el.focus();

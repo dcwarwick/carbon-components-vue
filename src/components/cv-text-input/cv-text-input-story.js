@@ -1,7 +1,6 @@
 import { storiesOf } from '@storybook/vue';
-import { withKnobs, text, boolean } from '@storybook/addon-knobs';
+import { text, boolean } from '@storybook/addon-knobs';
 import { action } from '@storybook/addon-actions';
-import { withNotes } from '@storybook/addon-notes';
 
 import SvTemplateView from '../../_storybook/views/sv-template-view/sv-template-view';
 // import consts from '../../_storybook/utils/consts';
@@ -10,9 +9,7 @@ import knobsHelper from '../../_storybook/utils/knobs-helper';
 import CvTextInputNotesMD from './cv-text-input-notes.md';
 import CvTextInput from './cv-text-input';
 
-const stories = storiesOf('CvTextInput', module);
-stories.addDecorator(withKnobs);
-stories.addDecorator(withNotes);
+const stories = storiesOf('Default/CvTextInput', module);
 
 const preKnobs = {
   theme: {
@@ -51,6 +48,25 @@ const preKnobs = {
     prop: {
       type: Boolean,
       name: 'disabled',
+    },
+  },
+  inputType: {
+    group: 'attr',
+    type: boolean,
+    config: ['password type', false],
+    prop: {
+      name: 'type',
+      type: String,
+      value: val => (val ? 'password' : null),
+    },
+  },
+  passwordVisible: {
+    group: 'attr',
+    type: boolean,
+    config: ['password visible', false],
+    prop: {
+      type: Boolean,
+      name: 'password-visible',
     },
   },
   placeholder: {

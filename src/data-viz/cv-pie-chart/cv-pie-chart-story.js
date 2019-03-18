@@ -1,6 +1,5 @@
 import { storiesOf } from '@storybook/vue';
-import { withKnobs, text, array, object } from '@storybook/addon-knobs/vue';
-import { withNotes } from '@storybook/addon-notes';
+import { text, array, object } from '@storybook/addon-knobs/vue';
 
 import SvTemplateView from '../../_storybook/views/sv-template-view/sv-template-view';
 import knobsHelper from '../../_storybook/utils/knobs-helper';
@@ -9,8 +8,6 @@ import CvPieChartNotesMD from './cv-pie-chart-notes.md';
 import CvPieChart from './cv-pie-chart';
 
 const stories = storiesOf('Data-Viz/CvPieChart', module);
-stories.addDecorator(withKnobs);
-stories.addDecorator(withNotes);
 
 const preKnobs = {
   dataArray: {
@@ -56,7 +53,8 @@ for (const story of storySet) {
   <sv-template-view
     sv-margin
     :sv-alt-back="this.$options.propsData.theme !== 'light'"
-    sv-source='${templateString.trim()}'>
+    sv-source='${templateString.trim()}'
+    under-construction>
     <template slot="component">${templateString}</template>
   </sv-template-view>
   `;

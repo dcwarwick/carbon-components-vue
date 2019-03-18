@@ -1,6 +1,5 @@
 import { storiesOf } from '@storybook/vue';
-import { withKnobs, text } from '@storybook/addon-knobs';
-import { withNotes } from '@storybook/addon-notes';
+import { text, select } from '@storybook/addon-knobs';
 
 import SvTemplateView from '../../_storybook/views/sv-template-view/sv-template-view';
 // import consts from '../../_storybook/utils/consts';
@@ -8,16 +7,17 @@ import knobsHelper from '../../_storybook/utils/knobs-helper';
 
 import CvCodeSnippetNotesMD from './cv-code-snippet-notes.md';
 import CvCodeSnippet from './cv-code-snippet';
+import CvCodeSnippetSkeleton from './cv-code-snippet-skeleton';
 
-const stories = storiesOf('CvCodeSnippet', module);
-stories.addDecorator(withKnobs);
-stories.addDecorator(withNotes);
+const storiesDefault = storiesOf('Default/CvCodeSnippet', module);
+const storiesExperimental = storiesOf('Experimental/CvCodeSnippet', module);
+import { override, reset } from '../../_internal/_feature-flags';
 
-const preKnobs = {
+let preKnobs = {
   lessText: {
     group: 'attr',
     type: text,
-    config: ['Less text', ''], // consts.CONTENT], // fails when used with number in storybook 4.1.4
+    config: ['Less text', 'Show less'], // consts.CONTENT], // fails when used with number in storybook 4.1.4
     inline: true,
     prop: {
       name: 'less-text',
@@ -27,7 +27,7 @@ const preKnobs = {
   moreText: {
     group: 'attr',
     type: text,
-    config: ['More text', ''], // consts.CONTENT], // fails when used with number in storybook 4.1.4
+    config: ['More text', 'Show more'], // consts.CONTENT], // fails when used with number in storybook 4.1.4
     inline: true,
     prop: {
       name: 'more-text',
@@ -63,7 +63,7 @@ $z-indexes: (
   },
 };
 
-const variants = [
+let variants = [
   {
     name: 'default',
     includes: ['content'],
@@ -89,26 +89,31 @@ const variants = [
   },
 ];
 
-const storySet = knobsHelper.getStorySet(variants, preKnobs);
+let storySet = knobsHelper.getStorySet(variants, preKnobs);
 
-for (const story of storySet) {
-  stories.add(
-    story.name,
-    () => {
-      const settings = story.knobs();
+for (const experimental of [false, true]) {
+  const stories = experimental ? storiesExperimental : storiesDefault;
 
-      // ----------------------------------------------------------------
-      // console.dir(settings);
-      const templateString = `
+  for (const story of storySet) {
+    stories.add(
+      story.name,
+      () => {
+        experimental ? override({ componentsX: true }) : reset();
+        const settings = story.knobs();
+
+        // ----------------------------------------------------------------
+        // console.dir(settings);
+        const templateString = `
 <cv-code-snippet${settings.group.attr}>
   ${settings.group['content']}
 </cv-code-snippet>
   `;
 
-      // ----------------------------------------------------------------
+        // ----------------------------------------------------------------
 
-      const templateViewString = `
+        const templateViewString = `
     <sv-template-view ref="view"
+      :sv-experimental="experimental"
       sv-margin
       :sv-alt-back="${settings.group.attr.indexOf('inline') > -1}"
       sv-source='${templateString.trim()}'>
@@ -116,14 +121,78 @@ for (const story of storySet) {
     </sv-template-view>
   `;
 
-      return {
-        components: { CvCodeSnippet, SvTemplateView },
-        template: templateViewString,
-        props: settings.props,
-      };
+        return {
+          components: { CvCodeSnippet, SvTemplateView },
+          data: () => ({ experimental }),
+          template: templateViewString,
+          props: settings.props,
+        };
+      },
+      {
+        notes: { markdown: CvCodeSnippetNotesMD },
+      }
+    );
+  }
+}
+// cv-code-snippet-skeleton
+
+preKnobs = {
+  kind: {
+    group: 'attr',
+    type: select,
+    config: [
+      'kind',
+      { oneline: 'oneline', multiline: 'multiline' },
+      'multiline',
+    ], // consts.CONFIG], // fails when used with number in storybook 4.1.4
+    prop: {
+      name: 'kind',
+      type: String,
     },
-    {
-      notes: { markdown: CvCodeSnippetNotesMD },
-    }
-  );
+  },
+};
+
+variants = [{ name: 'skeleton' }];
+
+storySet = knobsHelper.getStorySet(variants, preKnobs);
+
+for (const experimental of [false, true]) {
+  const stories = experimental ? storiesExperimental : storiesDefault;
+
+  for (const story of storySet) {
+    stories.add(
+      story.name,
+      () => {
+        experimental ? override({ componentsX: true }) : reset();
+        const settings = story.knobs();
+
+        const templateString = `
+        <cv-code-snippet-skeleton${
+          settings.group.attr
+        }></cv-code-snippet-skeleton>
+      `;
+
+        // ----------------------------------------------------------------
+
+        const templateViewString = `
+      <sv-template-view
+        :sv-experimental="experimental"
+        sv-margin
+        sv-source='${templateString.trim()}'>
+        <template slot="component">${templateString}</template>
+      </sv-template-view>
+    `;
+
+        return {
+          components: { CvCodeSnippetSkeleton, SvTemplateView },
+          data: () => ({ experimental }),
+          template: templateViewString,
+          props: settings.props,
+        };
+      },
+      {
+        notes: { markdown: CvCodeSnippetNotesMD },
+      }
+    );
+  }
 }

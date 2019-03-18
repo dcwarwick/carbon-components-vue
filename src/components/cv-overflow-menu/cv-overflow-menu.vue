@@ -43,7 +43,7 @@
         class="cv-overflow-menu__before-content"
         ref="beforeContent"
         tabindex="0"
-        style="position: absolute; height: 1px; width: 1px; left: -9999px"
+        style="position: absolute; height: 1px; width: 1px; left: -9999px;"
         @focus="focusBeforeContent"
       />
       <slot></slot>
@@ -51,7 +51,7 @@
         class="cv-overflow-menu__after-content"
         ref="afterContent"
         tabindex="0"
-        style="position: absolute; height: 1px; width: 1px; left: -9999px"
+        style="position: absolute; height: 1px; width: 1px; left: -9999px;"
         @focus="focusAfterContent"
       />
     </ul>
@@ -110,18 +110,18 @@ export default {
         ) {
           this.open = false;
           this.positionListen(false);
-          setTimeout(() => {
+          this.$nextTick(() => {
             this.doFocus();
-          }, 1);
+          });
         }
       }
     },
     menuItemclick() {
       this.open = false;
       this.positionListen(false);
-      setTimeout(() => {
+      this.$nextTick(() => {
         this.doFocus();
-      }, 1);
+      });
     },
     doClose() {
       this.open = false;
@@ -136,10 +136,10 @@ export default {
         window.removeEventListener('resize', this.positionMenu);
       }
     },
-    positionMenu() {
+    async positionMenu() {
       if (this.open) {
         const menuPosition = this.$el.getBoundingClientRect();
-        setTimeout(() => {
+        return this.$nextTick(() => {
           if (this.flipMenu) {
             this.left =
               menuPosition.left +
@@ -155,7 +155,7 @@ export default {
             this.top =
               menuPosition.bottom + 2 + this.offsetTop + window.scrollY;
           }
-        }, 1);
+        });
       }
     },
     doFocus() {
@@ -184,16 +184,18 @@ export default {
       } else {
         focusOn = this.$el;
       }
-      setTimeout(() => {
-        focusOn.focus();
-      }, 1);
+      focusOn.focus();
     },
-    doToggle() {
+    async doToggle() {
       this.open = !this.open;
 
-      this.positionMenu();
+      // await positionMenu otherwise it can race doFocus.
+      // On initial open the menu is positioned 0,0 causing a jump
+      await this.positionMenu();
       this.positionListen(this.open);
-      this.doFocus();
+      this.$nextTick(() => {
+        this.doFocus();
+      });
     },
     onOverflowMenuTab(ev) {
       if (!ev.shiftKey) {

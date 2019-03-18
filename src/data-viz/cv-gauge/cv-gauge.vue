@@ -138,6 +138,12 @@ export default {
     },
   },
   mounted() {
+    console.warn(
+      `${
+        this.$vnode.componentOptions.Ctor.extendOptions.name
+      } - Under review. This component isn't quite ready. Hopefully no features will get broken but this cannot be guarenteed.`
+    );
+
     const svg = d3
       .select('svg')
       .attr('width', boxSize)
@@ -155,8 +161,8 @@ export default {
 
 <style lang="scss">
 .bx--graph-header {
-  font-weight: 300;
   font-size: 24px;
+  font-weight: 300;
 }
 
 .cv-gauge__container {
