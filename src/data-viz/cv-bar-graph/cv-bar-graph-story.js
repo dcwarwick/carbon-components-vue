@@ -1,6 +1,13 @@
 import { storiesOf } from '@storybook/vue';
-import { text, object, number, boolean } from '@storybook/addon-knobs';
+import {
+  withKnobs,
+  text,
+  object,
+  number,
+  boolean,
+} from '@storybook/addon-knobs';
 // import { action } from '@storybook/addon-actions';
+import { withNotes } from '@storybook/addon-notes';
 
 import SvTemplateView from '../../_storybook/views/sv-template-view/sv-template-view';
 import knobsHelper from '../../_storybook/utils/knobs-helper';
@@ -9,6 +16,8 @@ import CvBarGraphNotesMD from './cv-bar-graph-notes.md';
 import CvBarGraph from './cv-bar-graph';
 
 const stories = storiesOf('Data-Viz/CvBarGraph', module);
+stories.addDecorator(withKnobs);
+stories.addDecorator(withNotes);
 
 const preKnobs = {
   width: {
@@ -179,8 +188,7 @@ for (const story of storySet) {
       const templateViewString = `
     <sv-template-view
       sv-margin
-      sv-source='${templateString.trim()}'
-      under-construction>
+      sv-source='${templateString.trim()}'>
       <template slot="component">${templateString}</template>
     </sv-template-view>
   `;

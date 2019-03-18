@@ -24,7 +24,6 @@ import radioMixin from '../../mixins/radio-mixin';
 
 export default {
   name: 'CvRadioButton',
-  inheritAttrs: false,
   mixins: [uidMixin, radioMixin],
 };
 </script>

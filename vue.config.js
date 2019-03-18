@@ -5,9 +5,4 @@ module.exports = {
   configureWebpack: {
     plugins: [new CopyWebpackPlugin([{ from: 'src/public' }])],
   },
-
-  pluginOptions: {
-    lintStyleOnBuild: true,
-    stylelint: {},
-  },
 };

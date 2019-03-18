@@ -1,5 +1,6 @@
 import { storiesOf } from '@storybook/vue';
-import { text } from '@storybook/addon-knobs';
+import { withKnobs, text } from '@storybook/addon-knobs';
+import { withNotes } from '@storybook/addon-notes';
 
 import SvTemplateView from '../../_storybook/views/sv-template-view/sv-template-view';
 // import consts from '../../_storybook/utils/consts';
@@ -8,7 +9,9 @@ import knobsHelper from '../../_storybook/utils/knobs-helper';
 import CvTagNotesMD from './cv-tag-notes.md';
 import CvTag from './cv-tag';
 
-const stories = storiesOf('Default/CvTag', module);
+const stories = storiesOf('CvTag', module);
+stories.addDecorator(withKnobs);
+stories.addDecorator(withNotes);
 
 const preKnobs = {
   label: {

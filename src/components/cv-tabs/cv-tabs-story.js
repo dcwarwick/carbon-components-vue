@@ -1,6 +1,7 @@
 import { storiesOf } from '@storybook/vue';
-import { boolean } from '@storybook/addon-knobs';
+import { withKnobs, boolean } from '@storybook/addon-knobs';
 import { action } from '@storybook/addon-actions';
+import { withNotes } from '@storybook/addon-notes';
 
 import SvTemplateView from '../../_storybook/views/sv-template-view/sv-template-view';
 // import consts from '../../_storybook/utils/consts';
@@ -10,7 +11,9 @@ import CvTabsNotesMD from './cv-tabs-notes.md';
 import CvTabs from './cv-tabs';
 import CvTab from './cv-tab';
 
-const stories = storiesOf('Default/CvTabs', module);
+const stories = storiesOf('CvTabs', module);
+stories.addDecorator(withKnobs);
+stories.addDecorator(withNotes);
 
 const preKnobs = {
   selected: {

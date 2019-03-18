@@ -1,6 +1,6 @@
 import { storiesOf } from '@storybook/vue';
-import { text, object, number } from '@storybook/addon-knobs';
-
+import { withKnobs, text, object, number } from '@storybook/addon-knobs';
+import { withNotes } from '@storybook/addon-notes';
 import { action } from '@storybook/addon-actions';
 
 import SvTemplateView from '../../_storybook/views/sv-template-view/sv-template-view';
@@ -10,7 +10,9 @@ import knobsHelper from '../../_storybook/utils/knobs-helper';
 import CvPaginationNotesMD from './cv-pagination-notes.md';
 import CvPagination from './cv-pagination';
 
-const stories = storiesOf('Default/CvPagination', module);
+const stories = storiesOf('CvPagination', module);
+stories.addDecorator(withKnobs);
+stories.addDecorator(withNotes);
 
 const preKnobs = {
   backwardsText: {

@@ -1,5 +1,6 @@
 import { storiesOf } from '@storybook/vue';
-import { text, select, boolean } from '@storybook/addon-knobs';
+import { withKnobs, text, select, boolean } from '@storybook/addon-knobs';
+import { withNotes } from '@storybook/addon-notes';
 
 import SvTemplateView from '../../_storybook/views/sv-template-view/sv-template-view';
 // import consts from '../../_storybook/utils/consts';
@@ -10,7 +11,8 @@ import CvInteractiveTooltip from './cv-interactive-tooltip';
 import CvTooltip from './cv-tooltip';
 import CvDefinitionTooltip from './cv-definition-tooltip';
 
-const stories = storiesOf('Default/CvTooltip', module);
+const stories = storiesOf('CvTooltip', module);
+stories.addDecorator(withKnobs).addDecorator(withNotes);
 
 let preKnobs = {
   direction: {
@@ -114,10 +116,10 @@ for (const story of storySet) {
         props: settings.props,
         methods: {
           show() {
-            this.$children[0].$children[0].$children[0].show();
+            this.$children[0].$children[0].show();
           },
           hide() {
-            this.$children[0].$children[0].$children[0].hide();
+            this.$children[0].$children[0].hide();
           },
         },
       };

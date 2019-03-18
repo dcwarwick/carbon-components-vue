@@ -323,11 +323,7 @@ export default {
   },
 
   mounted() {
-    console.warn(
-      `${
-        this.$vnode.componentOptions.Ctor.extendOptions.name
-      } - Under review. This component isn't quite ready. Hopefully no features will get broken but this cannot be guarenteed.`
-    );
+    console.warn(`CVBarGraph API under review`);
     this.updateGraph();
   },
 
@@ -399,12 +395,10 @@ $color-text: #5a6872;
 .cv-bar-graph__y-axis {
   font-family: 'ibm-plex-sans';
 
-  /* stylelint-disable-next-line selector-max-type */
   .tick line {
     stroke: $color-text;
   }
 
-  /* stylelint-disable-next-line selector-max-type */
   .tick text {
     fill: $color-text;
     font-size: 10px;
@@ -415,7 +409,6 @@ $color-text: #5a6872;
 .cv-bar-graph__y-axis {
   stroke-dasharray: 4;
 
-  /* stylelint-disable-next-line selector-max-type */
   path {
     display: none;
   }
@@ -477,12 +470,12 @@ $color-text: #5a6872;
   padding: 0.25rem 0.5rem;
   transform: translate(-50%, -100%);
   border: 1px solid $color__gray-1;
+  font-weight: 700;
   background-color: #fff;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1);
-  font-weight: 700;
   pointer-events: none;
 
-  &::after {
+  &:after {
     content: '';
     position: absolute;
     top: 100%;
@@ -490,9 +483,9 @@ $color-text: #5a6872;
     width: 0;
     height: 0;
     transform: translateX(-50%);
-    border-top: 5px solid #fff;
-    border-right: 5px solid transparent;
     border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #fff;
   }
 }
 </style>

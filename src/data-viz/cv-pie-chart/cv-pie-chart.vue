@@ -19,9 +19,7 @@
   <div class="cv-pie-chart">
     <h2 class="bx--graph-header">{{ header }}</h2>
     <div class="cv-pie-chart__container">
-      <svg :width="width" :height="height">
-        <g></g>
-      </svg>
+      <svg :width="width" :height="height"><g /></svg>
       <div class="cv-pie-chart__tooltip">
         <p class="cv-pie-chart__amount"></p>
         <p class="cv-pie-chart__item"></p>
@@ -137,12 +135,6 @@ export default {
     },
   },
   mounted() {
-    console.warn(
-      `${
-        this.$vnode.componentOptions.Ctor.extendOptions.name
-      } - Under review. This component isn't quite ready. Hopefully no features will get broken but this cannot be guarenteed.`
-    );
-
     this.g = d3
       .select('g')
       .attr('transform', `translate(${this.width / 2}, ${this.height / 2})`);
@@ -155,8 +147,8 @@ export default {
 
 <style lang="scss">
 .bx--graph-header {
-  font-size: 24px;
   font-weight: 300;
+  font-size: 24px;
 }
 
 .cv-pie-chart__container {
@@ -165,31 +157,30 @@ export default {
 }
 
 .cv-pie-chart__tooltip {
-  display: flex;
   position: absolute;
   top: 50%;
   left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
   flex-direction: column;
   justify-content: center;
-  width: 100%;
-  transform: translate(-50%, -50%);
   pointer-events: none;
+  width: 100%;
 
-  /* stylelint-disable-next-line selector-max-type */
   p {
     text-align: center;
   }
 
   .cv-pie-chart__amount {
     font-size: 29px;
-    font-weight: 300;
     line-height: 1;
+    font-weight: 300;
   }
 
   .cv-pie-chart__item {
-    color: #5a6872;
-    font-size: 14px;
     font-weight: 400;
+    font-size: 14px;
+    color: #5a6872;
   }
 }
 </style>

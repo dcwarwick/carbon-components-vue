@@ -1,6 +1,6 @@
 import { storiesOf } from '@storybook/vue';
-import { boolean } from '@storybook/addon-knobs';
-
+import { withKnobs, boolean } from '@storybook/addon-knobs';
+import { withNotes } from '@storybook/addon-notes';
 import { action } from '@storybook/addon-actions';
 
 import SvTemplateView from '../../_storybook/views/sv-template-view/sv-template-view';
@@ -10,9 +10,9 @@ import knobsHelper from '../../_storybook/utils/knobs-helper';
 import CvLoadingNotesMD from './cv-loading-notes.md';
 import CvLoading from './cv-loading';
 
-const storiesDefault = storiesOf('Default/CvLoading', module);
-const storiesExperimental = storiesOf('Experimental/CvLoading', module);
-import { override, reset } from '../../_internal/_feature-flags';
+const stories = storiesOf('CvLoading', module);
+stories.addDecorator(withKnobs);
+stories.addDecorator(withNotes);
 
 const preKnobs = {
   active: {
@@ -46,26 +46,21 @@ const variants = [
 
 const storySet = knobsHelper.getStorySet(variants, preKnobs);
 
-for (const experimental of [false, true]) {
-  const stories = experimental ? storiesExperimental : storiesDefault;
+for (const story of storySet) {
+  stories.add(
+    story.name,
+    () => {
+      const settings = story.knobs();
 
-  for (const story of storySet) {
-    stories.add(
-      story.name,
-      () => {
-        experimental ? override({ componentsX: true }) : reset();
-        const settings = story.knobs();
-
-        // ----------------------------------------------------------------
-        const templateString = `
+      // ----------------------------------------------------------------
+      const templateString = `
 <cv-loading${settings.group.attr}></cv-loading>
   `;
 
-        // ----------------------------------------------------------------
+      // ----------------------------------------------------------------
 
-        const templateViewString = `
+      const templateViewString = `
     <sv-template-view
-      :sv-experimental="experimental"
       sv-margin
       sv-source='${templateString.trim()}'>
       <template slot="component" ref="component">
@@ -74,19 +69,17 @@ for (const experimental of [false, true]) {
     </sv-template-view>
   `;
 
-        return {
-          components: { CvLoading, SvTemplateView },
-          data: () => ({ experimental }),
-          template: templateViewString,
-          props: settings.props,
-          methods: {
-            actionEnd: action('CvLoading - loading-end'),
-          },
-        };
-      },
-      {
-        notes: { markdown: CvLoadingNotesMD },
-      }
-    );
-  }
+      return {
+        components: { CvLoading, SvTemplateView },
+        template: templateViewString,
+        props: settings.props,
+        methods: {
+          actionEnd: action('CvLoading - loading-end'),
+        },
+      };
+    },
+    {
+      notes: { markdown: CvLoadingNotesMD },
+    }
+  );
 }

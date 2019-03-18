@@ -1,5 +1,6 @@
 import { storiesOf } from '@storybook/vue';
-import { text, number } from '@storybook/addon-knobs/vue';
+import { withKnobs, text, number } from '@storybook/addon-knobs/vue';
+import { withNotes } from '@storybook/addon-notes';
 
 import SvTemplateView from '../../_storybook/views/sv-template-view/sv-template-view';
 import knobsHelper from '../../_storybook/utils/knobs-helper';
@@ -8,6 +9,8 @@ import CvGaugeNotesMD from './cv-gauge-notes.md';
 import CvGauge from './cv-gauge';
 
 const stories = storiesOf('Data-Viz/CvGauge', module);
+stories.addDecorator(withKnobs);
+stories.addDecorator(withNotes);
 
 const preKnobs = {
   amount: {
@@ -56,8 +59,7 @@ for (const story of storySet) {
   <sv-template-view
     sv-margin
     :sv-alt-back="this.$options.propsData.theme !== 'light'"
-    sv-source='${templateString.trim()}'
-    under-construction>
+    sv-source='${templateString.trim()}'>
     <template slot="component">${templateString}</template>
   </sv-template-view>
   `;

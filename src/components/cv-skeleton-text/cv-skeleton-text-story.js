@@ -1,5 +1,6 @@
 import { storiesOf } from '@storybook/vue';
-import { boolean, text, number } from '@storybook/addon-knobs';
+import { withKnobs, boolean, text, number } from '@storybook/addon-knobs';
+import { withNotes } from '@storybook/addon-notes';
 
 import SvTemplateView from '../../_storybook/views/sv-template-view/sv-template-view';
 import knobsHelper from '../../_storybook/utils/knobs-helper';
@@ -7,7 +8,9 @@ import knobsHelper from '../../_storybook/utils/knobs-helper';
 import CvSkeletonTextNotesMD from './cv-skeleton-text-notes.md';
 import CvSkeletonText from './cv-skeleton-text';
 
-const stories = storiesOf('Default/CvSkeletonText', module);
+const stories = storiesOf('CvSkeletonText', module);
+stories.addDecorator(withKnobs);
+stories.addDecorator(withNotes);
 
 const preKnobs = {
   heading: {

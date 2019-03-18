@@ -18,9 +18,7 @@
       :aria-controls="uid"
       @click="toggle"
     >
-      <ChevronRight16 v-if="componentsX" class="bx--accordion__arrow" />
       <svg
-        v-else
         class="bx--accordion__arrow"
         width="8"
         height="12"
@@ -40,14 +38,11 @@
 </template>
 
 <script>
-import { componentsX } from '../../_internal/_feature-flags';
-import ChevronRight16 from '@carbon/icons-vue/lib/chevron--right/16';
 import uidMixin from '../../mixins/uid-mixin';
 
 export default {
   name: 'CvAccordionItem',
   mixins: [uidMixin],
-  components: { ChevronRight16 },
   props: {
     open: { type: Boolean, default: false },
   },
@@ -61,7 +56,6 @@ export default {
   },
   data() {
     return {
-      componentsX,
       dataOpen: false,
     };
   },

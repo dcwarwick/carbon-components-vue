@@ -1,5 +1,6 @@
 import { storiesOf } from '@storybook/vue';
-import { boolean } from '@storybook/addon-knobs';
+import { withKnobs, boolean } from '@storybook/addon-knobs';
+import { withNotes } from '@storybook/addon-notes';
 
 import SvTemplateView from '../../_storybook/views/sv-template-view/sv-template-view';
 // import consts from '../../_storybook/utils/consts';
@@ -10,9 +11,9 @@ import CvBreadcrumb from './cv-breadcrumb';
 import CvBreadcrumbItem from './cv-breadcrumb-item';
 import CvBreadcrumbSkeleton from './cv-breadcrumb-skeleton';
 
-const storiesDefault = storiesOf('Default/CvBreadcrumb', module);
-const storiesExperimental = storiesOf('Experimental/CvBreadcrumb', module);
-import { override, reset } from '../../_internal/_feature-flags';
+const stories = storiesOf('CvBreadcrumb', module);
+stories.addDecorator(withKnobs);
+stories.addDecorator(withNotes);
 
 const preKnobs = {
   noTrailingSlash: {
@@ -30,19 +31,15 @@ const variants = [{ name: 'default' }];
 
 const storySet = knobsHelper.getStorySet(variants, preKnobs);
 
-for (const experimental of [false, true]) {
-  const stories = experimental ? storiesExperimental : storiesDefault;
-  experimental ? override({ componentsX: true }) : reset();
+for (const story of storySet) {
+  stories.add(
+    story.name,
+    () => {
+      const settings = story.knobs();
 
-  for (const story of storySet) {
-    stories.add(
-      story.name,
-      () => {
-        const settings = story.knobs();
+      // ----------------------------------------------------------------
 
-        // ----------------------------------------------------------------
-
-        const templateString = `
+      const templateString = `
   <cv-breadcrumb${settings.group.attr}>
     <cv-breadcrumb-item>
       Some text
@@ -56,54 +53,44 @@ for (const experimental of [false, true]) {
   </cv-breadcrumb>
 `;
 
-        // ----------------------------------------------------------------
+      // ----------------------------------------------------------------
 
-        const templateViewString = `
+      const templateViewString = `
       <sv-template-view
-        :sv-experimental="experimental"
         sv-margin
         sv-source='${templateString.trim()}'>
         <template slot="component">${templateString}</template>
       </sv-template-view>
     `;
 
-        return {
-          components: { CvBreadcrumb, CvBreadcrumbItem, SvTemplateView },
-          data: () => ({ experimental }),
-          template: templateViewString,
-          props: settings.props,
-        };
-      },
-      {
-        notes: { markdown: CvBreadcrumbNotesMD },
-      }
-    );
-  }
+      return {
+        components: { CvBreadcrumb, CvBreadcrumbItem, SvTemplateView },
+        template: templateViewString,
+        props: settings.props,
+      };
+    },
+    {
+      notes: { markdown: CvBreadcrumbNotesMD },
+    }
+  );
 }
 
 const templateString = `<cv-breadcrumb-skeleton></cv-breadcrumb-skeleton>`;
-for (const experimental of [false, true]) {
-  const stories = experimental ? storiesExperimental : storiesDefault;
-  experimental ? override({ componentsX: true }) : reset();
-
-  stories.add(
-    'skeleton',
-    () => ({
-      components: { SvTemplateView, CvBreadcrumbSkeleton },
-      data: () => ({ experimental }),
-      template: `
+stories.add(
+  'skeleton',
+  () => ({
+    components: { SvTemplateView, CvBreadcrumbSkeleton },
+    template: `
       <sv-template-view
-        :sv-experimental="experimental"
         sv-margin
         sv-position="center"
         sv-source='${templateString.trim()}'>
         <template slot="component">${templateString}</template>
       </sv-template-view>
     `,
-      props: {},
-    }),
-    {
-      notes: { markdown: CvBreadcrumbNotesMD },
-    }
-  );
-}
+    props: {},
+  }),
+  {
+    notes: { markdown: CvBreadcrumbNotesMD },
+  }
+);

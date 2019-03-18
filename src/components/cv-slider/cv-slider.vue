@@ -123,20 +123,20 @@ export default {
       this.setValue(val);
     },
     min() {
-      this.$nextTick(() => {
+      setTimeout(() => {
         this.setValue(this.internalValue);
-      });
+      }, 1);
       //      this.internalMin = val && val.length ? val : '0';
     },
     max() {
-      this.$nextTick(() => {
+      setTimeout(() => {
         this.setValue(this.internalValue);
-      });
+      }, 1);
     },
     step() {
-      this.$nextTick(() => {
+      setTimeout(() => {
         this.setValue(this.internalValue);
-      });
+      }, 1);
     },
   },
   methods: {

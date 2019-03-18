@@ -1,6 +1,6 @@
 import { storiesOf } from '@storybook/vue';
-import { boolean } from '@storybook/addon-knobs';
-
+import { withKnobs, boolean } from '@storybook/addon-knobs';
+import { withNotes } from '@storybook/addon-notes';
 import { action } from '@storybook/addon-actions';
 
 import SvTemplateView from '../../_storybook/views/sv-template-view/sv-template-view';
@@ -10,9 +10,9 @@ import knobsHelper from '../../_storybook/utils/knobs-helper';
 import CvModalNotesMD from './cv-modal-notes.md';
 import CvModal from './cv-modal';
 
-const storiesDefault = storiesOf('Default/CvModal', module);
-const storiesExperimental = storiesOf('Experimental/CvModal', module);
-import { componentsX, override, reset } from '../../_internal/_feature-flags';
+const stories = storiesOf('CvModal', module);
+stories.addDecorator(withKnobs);
+stories.addDecorator(withNotes);
 
 const preKnobs = {
   label: {
@@ -34,18 +34,6 @@ const preKnobs = {
     slot: {
       name: 'content',
       value: `<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, seed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>`,
-    },
-  },
-  contentWithInput: {
-    group: 'content',
-    slot: {
-      name: 'content',
-      value: `
-      <div class="bx--form-item">
-        <label for="text-input-3h9mddk235a" class="bx--label">Text Input label</label>
-        <input id="text-input-3h9mddk235a" type="text" class="bx--text-input" placeholder="Optional placeholder text" data-modal-primary-focus>
-      </div>
-      `,
     },
   },
   secondaryButton: {
@@ -90,38 +78,31 @@ const variants = [
     includes: ['content', 'secondaryButton', 'events'],
   },
   { name: 'minimal', includes: ['content'] },
-  { name: 'with input', excludes: ['content'] },
   {
     name: 'danger',
-    excludes: ['contentWithInput'],
     extra: { kind: { group: 'attr', value: 'kind="danger"' } },
   },
 ];
 
 const storySet = knobsHelper.getStorySet(variants, preKnobs);
 
-for (const experimental of [false, true]) {
-  const stories = experimental ? storiesExperimental : storiesDefault;
+for (const story of storySet) {
+  stories.add(
+    story.name,
+    () => {
+      const settings = story.knobs();
 
-  for (const story of storySet) {
-    stories.add(
-      story.name,
-      () => {
-        experimental ? override({ componentsX: true }) : reset();
-        const settings = story.knobs();
-
-        // ----------------------------------------------------------------
-        const templateString = `
+      // ----------------------------------------------------------------
+      const templateString = `
 <cv-modal${settings.group.attr}>${settings.group.content}
 </cv-modal>
   `;
-        // console.log(templateString);
+      // console.log(templateString);
 
-        // ----------------------------------------------------------------
+      // ----------------------------------------------------------------
 
-        const templateViewString = `
+      const templateViewString = `
     <sv-template-view ref="view"
-      :sv-experimental="experimental"
       sv-margin
       sv-source='${templateString.trim()}'>
       <template slot="component">${templateString}</template>
@@ -129,28 +110,26 @@ for (const experimental of [false, true]) {
     </sv-template-view>
   `;
 
-        return {
-          components: { CvModal, SvTemplateView },
-          data: () => ({ experimental }),
-          props: settings.props,
-          methods: {
-            doSave() {
-              this.$refs.view.method('hide')();
-            },
-            show() {
-              this.$refs.view.method('show')();
-            },
-            actionShown: action('CV Modal - modal-shown'),
-            actionHidden: action('CV Modal - modal-hidden'),
-            actionPrimary: action('CV Modal - primary-click'),
-            actionSecondary: action('CV Modal - secondary-click'),
+      return {
+        components: { CvModal, SvTemplateView },
+        props: settings.props,
+        methods: {
+          doSave() {
+            this.$refs.view.method('hide')();
           },
-          template: templateViewString,
-        };
-      },
-      {
-        notes: { markdown: CvModalNotesMD },
-      }
-    );
-  }
+          show() {
+            this.$refs.view.method('show')();
+          },
+          actionShown: action('CV Modal - modal-shown'),
+          actionHidden: action('CV Modal - modal-hidden'),
+          actionPrimary: action('CV Modal - primary-click'),
+          actionSecondary: action('CV Modal - secondary-click'),
+        },
+        template: templateViewString,
+      };
+    },
+    {
+      notes: { markdown: CvModalNotesMD },
+    }
+  );
 }

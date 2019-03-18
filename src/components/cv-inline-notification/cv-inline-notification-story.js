@@ -1,6 +1,6 @@
 import { storiesOf } from '@storybook/vue';
-import { text } from '@storybook/addon-knobs';
-
+import { withKnobs, text } from '@storybook/addon-knobs';
+import { withNotes } from '@storybook/addon-notes';
 import { action } from '@storybook/addon-actions';
 
 import SvTemplateView from '../../_storybook/views/sv-template-view/sv-template-view';
@@ -10,12 +10,9 @@ import knobsHelper from '../../_storybook/utils/knobs-helper';
 import CvInlineNotificationNotesMD from './cv-inline-notification-notes.md';
 import CvInlineNotification from './cv-inline-notification';
 
-const storiesDefault = storiesOf('Default/CvInlineNotification', module);
-const storiesExperimental = storiesOf(
-  'Experimental/CvInlineNotification',
-  module
-);
-import { override, reset } from '../../_internal/_feature-flags';
+const stories = storiesOf('CvInlineNotification', module);
+stories.addDecorator(withKnobs);
+stories.addDecorator(withNotes);
 
 const preKnobs = {
   title: {
@@ -52,28 +49,23 @@ const variants = [
 
 const storySet = knobsHelper.getStorySet(variants, preKnobs);
 
-for (const experimental of [false, true]) {
-  const stories = experimental ? storiesExperimental : storiesDefault;
+for (const story of storySet) {
+  stories.add(
+    story.name,
+    () => {
+      const settings = story.knobs();
 
-  for (const story of storySet) {
-    stories.add(
-      story.name,
-      () => {
-        experimental ? override({ componentsX: true }) : reset();
-        const settings = story.knobs();
+      // ----------------------------------------------------------------
 
-        // ----------------------------------------------------------------
-
-        const templateString = `
+      const templateString = `
 <cv-inline-notification v-if="visible"${settings.group.attr}>
 </cv-inline-notification>
   `;
 
-        // ----------------------------------------------------------------
+      // ----------------------------------------------------------------
 
-        const templateViewString = `
+      const templateViewString = `
     <sv-template-view
-      :sv-experimental="experimental"
       sv-margin
       sv-source='${templateString.trim()}'>
       <template slot="component">${templateString}</template>
@@ -81,28 +73,26 @@ for (const experimental of [false, true]) {
     </sv-template-view>
   `;
 
-        return {
-          components: { CvInlineNotification, SvTemplateView },
-          template: templateViewString,
-          props: settings.props,
-          data() {
-            return {
-              experimental,
-              visible: true,
-            };
+      return {
+        components: { CvInlineNotification, SvTemplateView },
+        template: templateViewString,
+        props: settings.props,
+        data() {
+          return {
+            visible: true,
+          };
+        },
+        methods: {
+          actionClose: action('CV InlineNotification - close'),
+          doClose(ev) {
+            this.visible = false;
+            this.actionClose(ev);
           },
-          methods: {
-            actionClose: action('CV InlineNotification - close'),
-            doClose(ev) {
-              this.visible = false;
-              this.actionClose(ev);
-            },
-          },
-        };
-      },
-      {
-        notes: { markdown: CvInlineNotificationNotesMD },
-      }
-    );
-  }
+        },
+      };
+    },
+    {
+      notes: { markdown: CvInlineNotificationNotesMD },
+    }
+  );
 }
